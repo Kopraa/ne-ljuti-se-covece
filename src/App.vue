@@ -2,38 +2,70 @@
   <div class="app">
     <div class="dice">
       <p>Kocka je pala na: {{ DiceNumber }}</p>
+      <p>Trenutni igrač: {{ PlayerNames[CurrentPlayer] }}</p>
       <button @click="RollDice">Baci kockicu</button>
     </div>
     <div class="field-background">
+
+      <!-- Optimizovati nekom for petljom? -->
       <div class="player-1-base">
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
+        <div class="base">
+          <img id="yellow-1" @click="HandleClick('yellow-1')" src="@/assets/images/players/yellow.png" alt="Player 1">
+        </div>
+        <div class="base">
+          <img id="yellow-2" @click="HandleClick('yellow-2')" src="@/assets/images/players/yellow.png" alt="Player 1">
+        </div>
+        <div class="base">
+          <img id="yellow-3" @click="HandleClick('yellow-3')" src="@/assets/images/players/yellow.png" alt="Player 1">
+        </div>
+        <div class="base">
+          <img id="yellow-4" @click="HandleClick('yellow-4')" src="@/assets/images/players/yellow.png" alt="Player 1">
+        </div>
       </div>
       <div class="player-2-base">
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
+        <div class="base">
+          <img id="blue-1" src="@/assets/images/players/blue.png" alt="Player 2">
+        </div>
+        <div class="base">
+          <img id="blue-2" src="@/assets/images/players/blue.png" alt="Player 2">
+        </div>
+        <div class="base">
+          <img id="blue-3" src="@/assets/images/players/blue.png" alt="Player 2">
+        </div>
+        <div class="base">
+          <img id="blue-4" src="@/assets/images/players/blue.png" alt="Player 2">
+        </div>
       </div>
       <div class="player-3-base">
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
+        <div class="base">
+          <img id="red-1" src="@/assets/images/players/red.png" alt="Player 3">
+        </div>
+        <div class="base">
+          <img id="red-2" src="@/assets/images/players/red.png" alt="Player 3">
+        </div>
+        <div class="base">
+          <img id="red-3" src="@/assets/images/players/red.png" alt="Player 3">
+        </div>
+        <div class="base">
+          <img id="red-4" src="@/assets/images/players/red.png" alt="Player 3">
+        </div>
       </div>
       <div class="player-4-base">
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
-        <div class="base"></div>
+        <div class="base">
+          <img id="green-1" src="@/assets/images/players/green.png" alt="Player 4">
+        </div>
+        <div class="base">
+          <img id="green-2" src="@/assets/images/players/green.png" alt="Player 4">
+        </div>
+        <div class="base">
+          <img id="green-3" src="@/assets/images/players/green.png" alt="Player 4">
+        </div>
+        <div class="base">
+          <img id="green-4" src="@/assets/images/players/green.png" alt="Player 4">
+        </div>
       </div>
-      <div
-        class="img"
-        v-for="(Image, Index) in PlayerImages"
-        v-bind:key="Index"
-      >
+
+<!--        
         <img
           :src="require(`@/assets/images/players/${Image}.png`)"
           :alt="'Player ' + Index"
@@ -48,14 +80,9 @@
           :src="require(`@/assets/images/players/${Image}.png`)"
           :alt="'Player ' + Index"
           :class="'player' + Index"
-        />
-        <img
-          :src="require(`@/assets/images/players/${Image}.png`)"
-          :alt="'Player ' + Index"
-          :class="'player' + Index"
-        />
+        /> -->
         <!-- require('@/assets/images/players/' + Index + '.png')" -->
-      </div>
+
     </div>
   </div> 
 </template>
@@ -64,15 +91,142 @@
 import { defineComponent } from "vue";
 
 let FieldsCollection: Array<HTMLDivElement> = [];
-let CurrentPlayer = 0; // Igrač koji je trenutno na redu da baca kockicu i igra
+
+
 
 export default defineComponent({
   name: "App",
   data() {
     return {
+      PlayerData: {
+        Yellow: {
+          Username: '',
+          Score: 0,
+          Pawns: [
+            {
+              Id: 'yellow-1',
+              Position: 0,
+              Image: 'yellow',
+              IsActive: false,
+            },
+            {
+              Id: 'yellow-2',
+              Position: 0,
+              Image: 'yellow',
+              IsActive: false,
+            },
+            {
+              Id: 'yellow-3',
+              Position: 0,
+              Image: 'yellow',
+              IsActive: false,
+            },
+            {
+              Id: 'yellow-4',
+              Position: 0,
+              Image: 'yellow',
+              IsActive: false,
+            },
+          ],
+        },
+        Blue: {
+          Username: '',
+          Score: 0,
+          Pawns: [
+            {
+              Id: 'blue-1',
+              Position: 0,
+              Image: 'blue',
+              IsActive: false,
+            },
+            {
+              Id: 'blue-2',
+              Position: 0,
+              Image: 'blue',
+              IsActive: false,
+            },
+            {
+              Id: 'blue-3',
+              Position: 0,
+              Image: 'blue',
+              IsActive: false,
+            },
+            {
+              Id: 'blue-4',
+              Position: 0,
+              Image: 'blue',
+              IsActive: false,
+            },
+          ]
+        },
+        Red: {
+          Username: '',
+          Score: 0,
+          Pawns: [
+            {
+              Id: 'red-1',
+              Position: 0,
+              Image: 'red',
+              IsActive: false,
+            },
+            {
+              Id: 'red-2',
+              Position: 0,
+              Image: 'red',
+              IsActive: false,
+            },
+            {
+              Id: 'red-3',
+              Position: 0,
+              Image: 'red',
+              IsActive: false,
+            },
+            {
+              Id: 'red-4',
+              Position: 0,
+              Image: 'red',
+              IsActive: false,
+            },
+          ]
+        },
+        Green: {
+          Username: '',
+          Score: 0,
+          Pawns: [
+            {
+              Id: 'green-1',
+              Position: 0,
+              Image: 'green',
+              IsActive: false,
+            },
+            {
+              Id: 'green-2',
+              Position: 0,
+              Image: 'green',
+              IsActive: false,
+            },
+            {
+              Id: 'green-3',
+              Position: 0,
+              Image: 'green',
+              IsActive: false,
+            },
+            {
+              Id: 'green-4',
+              Position: 0,
+              Image: 'green',
+              IsActive: false,
+            },
+          ]
+        },
+      },
+      CurrentPlayer: 0, 
+      CurrentThrows: 0,
       StartingPositions: [1, 13, 25, 37], // Startne pozicije po bojama(igračima)
       DiceNumber: 0, // Broj koji je bacen
+      CanThrowDiceThreeTimes: [true, true, true, true],
       PlayerImages: ["yellow", "blue", "green", "red"],
+      PlayerNames: ["Žuti", "Plavi", "Zeleni", "Crveni"]
     };
   },
   mounted() {
@@ -152,22 +306,51 @@ export default defineComponent({
       const Main = document.getElementById("app");
       if (Main) Main.append(Field);
 
-      // Pushamo polja u array, možda zatreba
       FieldsCollection.push(Field);
     }
   },
 
   methods: {
     RollDice() {
-      this.DiceNumber = Math.floor(Math.random() * 6) + 1;
+      if (this.CanThrowDiceThreeTimes[this.CurrentPlayer]) {
+        this.CurrentThrows++;
+        this.DiceNumber = Math.floor(Math.random() * 6) + 1;
+
+        if (this.DiceNumber == 6) {
+          this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
+        }
+
+        if (this.CurrentThrows == 3) {
+
+          /* Ovo setati na false kada igrač ima makar 1 piuna na tabli */
+          this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
+
+          this.CurrentPlayer++;
+          this.CurrentThrows = 0;
+        }
+      }
+      if (this.CurrentPlayer > 3) {
+        this.CurrentPlayer = 0;
+      }
     },
 
-    Move(Player: number, Value: number) {
-      if (Value < 0 || Value > FieldsCollection.length)
-        return alert("Neispravan broj polja." + "0-" + FieldsCollection.length);
+    HandleClick(Pion: string) {
+      // if (Value < 0 || Value > FieldsCollection.length)
+      //   return alert("Neispravan broj polja." + "0-" + FieldsCollection.length);
 
-      const Field = FieldsCollection[Value];
+      let CurrentPion = document.getElementById(Pion);
+      console.log(CurrentPion);
+      if (!CurrentPion) return;
+      
+      
+
+
     },
+
+    // // proveriti type koji treba
+    // SelectFigure (Figure: any) {
+
+    // }
   },
 });
 </script>
@@ -182,6 +365,10 @@ export default defineComponent({
   position: absolute;
   left: 600px;
   top: 40px;
+}
+
+.selected {
+  border: brown;
 }
 
 .field-background {
@@ -250,7 +437,16 @@ export default defineComponent({
   height: 40px;
   border-radius: 50%;
   margin: 0 auto;
-  background: #00000090;
+  background: #FFF;
+
+  img {
+    width: 40px;
+    height: 40px;
+    &:hover {
+      border: 2px solid black;
+      border-radius: 50%;
+    }
+  }
 }
 
 .player0 {
