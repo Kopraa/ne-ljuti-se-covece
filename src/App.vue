@@ -9,18 +9,18 @@
 
       <!-- Optimizovati nekom for petljom? -->
       <div class="player-1-base">
-        <div class="base">
-          <img id="yellow-1" @click="HandleClick('yellow-1')" src="@/assets/images/players/yellow.png" alt="Player 1">
+        <div class="base" v-for="(Data, Index) in PlayerData.Yellow.Pawns" :key="Index">
+          <img :src="require('@/assets/images/players/' + Data.Image + '.png')" :click="HandleClick(Data.ID)" />
+        </div>
+        <!-- <div class="base">
+          <img id="yellow-2" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
         </div>
         <div class="base">
-          <img id="yellow-2" @click="HandleClick('yellow-2')" src="@/assets/images/players/yellow.png" alt="Player 1">
+          <img id="yellow-3" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
         </div>
         <div class="base">
-          <img id="yellow-3" @click="HandleClick('yellow-3')" src="@/assets/images/players/yellow.png" alt="Player 1">
-        </div>
-        <div class="base">
-          <img id="yellow-4" @click="HandleClick('yellow-4')" src="@/assets/images/players/yellow.png" alt="Player 1">
-        </div>
+          <img id="yellow-4" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
+        </div> -->
       </div>
       <div class="player-2-base">
         <div class="base">
@@ -99,7 +99,7 @@ export default defineComponent({
   data() {
     return {
       PlayerData: {
-        Yellow: {
+        Yellow: { // Player 1
           Username: '',
           Score: 0,
           Pawns: [
@@ -129,7 +129,7 @@ export default defineComponent({
             },
           ],
         },
-        Blue: {
+        Blue: { // Player 2
           Username: '',
           Score: 0,
           Pawns: [
@@ -159,7 +159,7 @@ export default defineComponent({
             },
           ]
         },
-        Red: {
+        Red: { // Player 3
           Username: '',
           Score: 0,
           Pawns: [
@@ -189,7 +189,7 @@ export default defineComponent({
             },
           ]
         },
-        Green: {
+        Green: { // Player 4
           Username: '',
           Score: 0,
           Pawns: [
@@ -220,11 +220,9 @@ export default defineComponent({
           ]
         },
       },
-      CurrentPlayer: 0, 
-      CurrentThrows: 0,
+      CurrentPlayer: 0, // 0 = Yellow, 1 = Blue, 2 = Red, 3 = Green
       StartingPositions: [1, 13, 25, 37], // Startne pozicije po bojama(igračima)
       DiceNumber: 0, // Broj koji je bacen
-      CanThrowDiceThreeTimes: [true, true, true, true],
       PlayerImages: ["yellow", "blue", "green", "red"],
       PlayerNames: ["Žuti", "Plavi", "Zeleni", "Crveni"]
     };
@@ -306,32 +304,33 @@ export default defineComponent({
       const Main = document.getElementById("app");
       if (Main) Main.append(Field);
 
-      FieldsCollection.push(Field);
+      FieldsCollection[i] = Field; // Kolekcija polja
     }
   },
 
   methods: {
     RollDice() {
-      if (this.CanThrowDiceThreeTimes[this.CurrentPlayer]) {
-        this.CurrentThrows++;
-        this.DiceNumber = Math.floor(Math.random() * 6) + 1;
+      /* Ovu kompletnu logiku treba da prepravimo, 1 igrač 1 objekat
+      // if (this.CanThrowDiceThreeTimes[this.CurrentPlayer]) {
+      //   this.CurrentThrows++;
+      //   this.DiceNumber = Math.floor(Math.random() * 6) + 1;
 
-        if (this.DiceNumber == 6) {
-          this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
-        }
+      //   if (this.DiceNumber == 6) {
+      //     this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
+      //   }
 
-        if (this.CurrentThrows == 3) {
+      //   if (this.CurrentThrows == 3) {
 
-          /* Ovo setati na false kada igrač ima makar 1 piuna na tabli */
-          this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
+      //     /* Ovo setati na false kada igrač ima makar 1 piuna na tabli */
+      //     this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
 
-          this.CurrentPlayer++;
-          this.CurrentThrows = 0;
-        }
-      }
-      if (this.CurrentPlayer > 3) {
-        this.CurrentPlayer = 0;
-      }
+      //     this.CurrentPlayer++;
+      //     this.CurrentThrows = 0;
+      //   }
+      // }
+      // if (this.CurrentPlayer > 3) {
+      //   this.CurrentPlayer = 0;
+      // }
     },
 
     HandleClick(Pion: string) {
