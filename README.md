@@ -1,4 +1,4 @@
-# Nije zavrŠeno.
+# Nije završeno.
 
 # ne-ljuti-se-covece
 
