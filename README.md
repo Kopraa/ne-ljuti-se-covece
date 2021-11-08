@@ -1,3 +1,5 @@
+# Nije zavrŠeno.
+
 # ne-ljuti-se-covece
 
 ## Project setup
