@@ -37,7 +37,7 @@
       <!-- <p>Preostalo bacanja: {{ PlayerNames[CurrentPlayer] }}</p> -->
 
       <button @click="RollDice">Baci kockicu</button>
-      <img :src="DiceImages[DiceNumber - 1]" alt="Dice Image" />
+      <img v-if="DiceNumber > 0" :src="DiceImages[DiceNumber - 1]" alt="Dice Image" />
     </div>
 
     <!-- Tabla -->
@@ -119,10 +119,10 @@ export default defineComponent({
     return {
       GameStarted: true,
       UsernamesModal: false,
-      CurrentPlayer: 0, // 0 = Yellow, 1 = Blue, 2 = Red, 3 = Green
+      CurrentPlayer: PlayerColors.Yellow, // 0 = Yellow, 1 = Blue, 2 = Red, 3 = Green
       CurrentThrows: 0,
       StartingPositions: [37, 1, 13, 25], // Startne pozicije po bojama(igračima)
-      DiceNumber: 1, // Broj koji je bacen
+      DiceNumber: 0, // Broj koji je bacen
       DiceImages: [
         require("@/assets/images/dice/1.png"),
         require("@/assets/images/dice/2.png"),
@@ -363,13 +363,22 @@ export default defineComponent({
   methods: {
     RollDice() {
       this.DiceNumber = Math.floor(Math.random() * 6) + 1;
-      // if (this.PlayerData[this.CurrentPlayer].Pawns.every((Pawn) => Pawn.InBase == true)) {
-      //   if (this.CurrentThrows > 3) {
+      this.CurrentThrows++;
 
-      //   }
-      // } else {
+      let MaxThrows;
+      // Proveravamo da li su svi piuni u bazi, ukoliko jesu dozovljavamo 3 bacanja
+      this.PlayerData[this.CurrentPlayer].Pawns.every(
+        (Pawn) => Pawn.InBase == true
+      )
+        ? (MaxThrows = 3)
+        : (MaxThrows = 1);
 
-      // }
+      // Menjamo igrača
+      if (this.CurrentThrows >= MaxThrows) {
+        this.CurrentThrows = 0;
+        this.CurrentPlayer++;
+        if (this.CurrentPlayer > 3) this.CurrentPlayer = 0;
+      }
     },
 
     HandleClick(PionID: string, Player: number) {
@@ -406,15 +415,16 @@ export default defineComponent({
           `Error: StartingField: ${StartingField} | CurrentPion: ${CurrentPionEl}`
         );
 
-      if (PionObject.InBase) {
+      // Da ne bi mogli da pomeramo piuna više puta
+      this.DiceNumber = 0;
 
+      if (PionObject.InBase) {
         // Postavljamo na startnu poziciju
         CurrentPionEl.style.position = "absolute";
         CurrentPionEl.style.top = StartingField.style.top;
         CurrentPionEl.style.left = StartingField.style.left;
         PionObject.InBase = false;
         PionObject.Position = StartingFieldNumber;
-
       } else {
         // Ako piun nije u bazi, pomeramo ga na novu poziciju
         const NextStepCount = PionObject.Position + this.DiceNumber;
@@ -442,14 +452,6 @@ export default defineComponent({
           return this.PlayerData[i].Pawns.find((Pawn) => Pawn.ID == PionID);
       }
     },
-
-    MovePion(PionID: string) {
-      const PionObject = this.GetPionById(PionID);
-      if (!PionObject) return alert("Pion nije pronađen. ID: " + PionID);
-
-      const CurrentPionEl = document.getElementById(PionID);
-      //const NextField = FieldsCollection[CurrentField + this.DiceNumber];
-    },
   },
 });
 </script>
@@ -467,7 +469,7 @@ export default defineComponent({
   img {
     width: 150px;
     height: 150px;
-   /*
+    /*
     animation: shake 0.5s;
     animation-iteration-count: 5; */
   }
