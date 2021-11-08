@@ -1,90 +1,104 @@
 <template>
   <div class="app">
-    <div class="dice">
+    <!-- Podaci o igračima -->
+    <div class="players" v-if="UsernamesModal">
+      <p>Unesite ime igrača:</p>
+      <input
+        class="user-input"
+        v-model="PlayerData[0].Username"
+        type="text"
+        placeholder="Ime žutog igrača"
+      />
+      <input
+        class="user-input"
+        v-model="PlayerData[1].Username"
+        type="text"
+        placeholder="Ime plavog igrača"
+      />
+      <input
+        class="user-input"
+        v-model="PlayerData[2].Username"
+        type="text"
+        placeholder="Ime crvenog igrača"
+      />
+      <input
+        class="user-input"
+        v-model="PlayerData[3].Username"
+        type="text"
+        placeholder="Ime zelenog igrača"
+      />
+      <button @click="GameStarted = true">Pokreni igru</button>
+    </div>
+
+    <!-- Kockica -->
+    <div class="dice" v-if="GameStarted">
       <p>Kocka je pala na: {{ DiceNumber }}</p>
       <p>Trenutni igrač: {{ PlayerNames[CurrentPlayer] }}</p>
+      <!-- <p>Preostalo bacanja: {{ PlayerNames[CurrentPlayer] }}</p> -->
+
       <button @click="RollDice">Baci kockicu</button>
+      <img :src="DiceImages[DiceNumber - 1]" alt="Dice Image" />
     </div>
-    <div class="field-background">
 
-      <!-- Optimizovati nekom for petljom? -->
+    <!-- Tabla -->
+    <div id="field-background" class="field-background" v-if="GameStarted">
       <div class="player-1-base">
-        <div class="base" v-for="(Data, Index) in PlayerData.Yellow.Pawns" :key="Index">
-          <img :src="require('@/assets/images/players/' + Data.Image + '.png')" :click="HandleClick(Data.ID)" />
+        <div
+          class="base"
+          v-for="(Data, Index) in PlayerData[0].Pawns"
+          :key="Index"
+        >
+          <img
+            :src="require('@/assets/images/players/' + Data.Image + '.png')"
+            :id="Data.ID"
+            @click="HandleClick(Data.ID, this.CurrentPlayer)"
+          />
         </div>
-        <!-- <div class="base">
-          <img id="yellow-2" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
-        </div>
-        <div class="base">
-          <img id="yellow-3" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
-        </div>
-        <div class="base">
-          <img id="yellow-4" @click="HandleClick()" src="@/assets/images/players/yellow.png" alt="Player 1">
-        </div> -->
       </div>
+
       <div class="player-2-base">
-        <div class="base">
-          <img id="blue-1" src="@/assets/images/players/blue.png" alt="Player 2">
-        </div>
-        <div class="base">
-          <img id="blue-2" src="@/assets/images/players/blue.png" alt="Player 2">
-        </div>
-        <div class="base">
-          <img id="blue-3" src="@/assets/images/players/blue.png" alt="Player 2">
-        </div>
-        <div class="base">
-          <img id="blue-4" src="@/assets/images/players/blue.png" alt="Player 2">
+        <div
+          class="base"
+          v-for="(Data, Index) in PlayerData[1].Pawns"
+          :key="Index"
+        >
+          <img
+            :src="require('@/assets/images/players/' + Data.Image + '.png')"
+            :id="Data.ID"
+            @click="HandleClick(Data.ID, this.CurrentPlayer)"
+          />
         </div>
       </div>
+
       <div class="player-3-base">
-        <div class="base">
-          <img id="red-1" src="@/assets/images/players/red.png" alt="Player 3">
-        </div>
-        <div class="base">
-          <img id="red-2" src="@/assets/images/players/red.png" alt="Player 3">
-        </div>
-        <div class="base">
-          <img id="red-3" src="@/assets/images/players/red.png" alt="Player 3">
-        </div>
-        <div class="base">
-          <img id="red-4" src="@/assets/images/players/red.png" alt="Player 3">
+        <div
+          class="base"
+          v-for="(Data, Index) in PlayerData[2].Pawns"
+          :key="Index"
+        >
+          <img
+            :src="require('@/assets/images/players/' + Data.Image + '.png')"
+            :id="Data.ID"
+            @click="HandleClick(Data.ID, this.CurrentPlayer)"
+          />
         </div>
       </div>
+
       <div class="player-4-base">
-        <div class="base">
-          <img id="green-1" src="@/assets/images/players/green.png" alt="Player 4">
-        </div>
-        <div class="base">
-          <img id="green-2" src="@/assets/images/players/green.png" alt="Player 4">
-        </div>
-        <div class="base">
-          <img id="green-3" src="@/assets/images/players/green.png" alt="Player 4">
-        </div>
-        <div class="base">
-          <img id="green-4" src="@/assets/images/players/green.png" alt="Player 4">
+        <div
+          class="base"
+          v-for="(Data, Index) in PlayerData[3].Pawns"
+          :key="Index"
+        >
+          <img
+            :src="require('@/assets/images/players/' + Data.Image + '.png')"
+            :id="Data.ID"
+            @click="HandleClick(Data.ID, this.CurrentPlayer)"
+          />
         </div>
       </div>
-
-<!--        
-        <img
-          :src="require(`@/assets/images/players/${Image}.png`)"
-          :alt="'Player ' + Index"
-          :class="'player' + Index"
-        />
-        <img
-          :src="require(`@/assets/images/players/${Image}.png`)"
-          :alt="'Player ' + Index"
-          :class="'player' + Index"
-        />
-        <img
-          :src="require(`@/assets/images/players/${Image}.png`)"
-          :alt="'Player ' + Index"
-          :class="'player' + Index"
-        /> -->
-        <!-- require('@/assets/images/players/' + Index + '.png')" -->
-
     </div>
-  </div> 
+  </div>
 </template>
 
 <script lang="ts">
@@ -92,139 +106,174 @@ import { defineComponent } from "vue";
 
 let FieldsCollection: Array<HTMLDivElement> = [];
 
-
+enum PlayerColors {
+  Yellow = 0,
+  Blue = 1,
+  Green = 2,
+  Red = 3,
+}
 
 export default defineComponent({
   name: "App",
   data() {
     return {
-      PlayerData: {
-        Yellow: { // Player 1
-          Username: '',
+      GameStarted: true,
+      UsernamesModal: false,
+      CurrentPlayer: 0, // 0 = Yellow, 1 = Blue, 2 = Red, 3 = Green
+      CurrentThrows: 0,
+      StartingPositions: [37, 1, 13, 25], // Startne pozicije po bojama(igračima)
+      DiceNumber: 1, // Broj koji je bacen
+      DiceImages: [
+        require("@/assets/images/dice/1.png"),
+        require("@/assets/images/dice/2.png"),
+        require("@/assets/images/dice/3.png"),
+        require("@/assets/images/dice/4.png"),
+        require("@/assets/images/dice/5.png"),
+        require("@/assets/images/dice/6.png"),
+      ],
+      PlayerNames: ["Žuti", "Plavi", "Zeleni", "Crveni"],
+      PlayerData: [
+        {
+          // Player 1
+          Username: "",
           Score: 0,
           Pawns: [
             {
-              Id: 'yellow-1',
+              ID: "yellow-1",
               Position: 0,
-              Image: 'yellow',
-              IsActive: false,
+              Image: "yellow",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'yellow-2',
+              ID: "yellow-2",
               Position: 0,
-              Image: 'yellow',
-              IsActive: false,
+              Image: "yellow",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'yellow-3',
+              ID: "yellow-3",
               Position: 0,
-              Image: 'yellow',
-              IsActive: false,
+              Image: "yellow",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'yellow-4',
+              ID: "yellow-4",
               Position: 0,
-              Image: 'yellow',
-              IsActive: false,
+              Image: "yellow",
+              InBase: true,
+              InHome: false,
             },
           ],
         },
-        Blue: { // Player 2
-          Username: '',
+        {
+          // Player 2
+          Username: "",
           Score: 0,
           Pawns: [
             {
-              Id: 'blue-1',
+              ID: "blue-1",
               Position: 0,
-              Image: 'blue',
-              IsActive: false,
+              Image: "blue",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'blue-2',
+              ID: "blue-2",
               Position: 0,
-              Image: 'blue',
-              IsActive: false,
+              Image: "blue",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'blue-3',
+              ID: "blue-3",
               Position: 0,
-              Image: 'blue',
-              IsActive: false,
+              Image: "blue",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'blue-4',
+              ID: "blue-4",
               Position: 0,
-              Image: 'blue',
-              IsActive: false,
+              Image: "blue",
+              InBase: true,
+              InHome: false,
             },
-          ]
+          ],
         },
-        Red: { // Player 3
-          Username: '',
+        {
+          // Player 3
+          Username: "",
           Score: 0,
           Pawns: [
             {
-              Id: 'red-1',
+              ID: "red-1",
               Position: 0,
-              Image: 'red',
-              IsActive: false,
+              Image: "red",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'red-2',
+              ID: "red-2",
               Position: 0,
-              Image: 'red',
-              IsActive: false,
+              Image: "red",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'red-3',
+              ID: "red-3",
               Position: 0,
-              Image: 'red',
-              IsActive: false,
+              Image: "red",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'red-4',
+              ID: "red-4",
               Position: 0,
-              Image: 'red',
-              IsActive: false,
+              Image: "red",
+              InBase: true,
+              InHome: false,
             },
-          ]
+          ],
         },
-        Green: { // Player 4
-          Username: '',
+        {
+          // Player 4
+          Username: "",
           Score: 0,
           Pawns: [
             {
-              Id: 'green-1',
+              ID: "green-1",
               Position: 0,
-              Image: 'green',
-              IsActive: false,
+              Image: "green",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'green-2',
+              ID: "green-2",
               Position: 0,
-              Image: 'green',
-              IsActive: false,
+              Image: "green",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'green-3',
+              ID: "green-3",
               Position: 0,
-              Image: 'green',
-              IsActive: false,
+              Image: "green",
+              InBase: true,
+              InHome: false,
             },
             {
-              Id: 'green-4',
+              ID: "green-4",
               Position: 0,
-              Image: 'green',
-              IsActive: false,
+              Image: "green",
+              InBase: true,
+              InHome: false,
             },
-          ]
+          ],
         },
-      },
-      CurrentPlayer: 0, // 0 = Yellow, 1 = Blue, 2 = Red, 3 = Green
-      StartingPositions: [1, 13, 25, 37], // Startne pozicije po bojama(igračima)
-      DiceNumber: 0, // Broj koji je bacen
-      PlayerImages: ["yellow", "blue", "green", "red"],
-      PlayerNames: ["Žuti", "Plavi", "Zeleni", "Crveni"]
+      ],
     };
   },
   mounted() {
@@ -236,7 +285,7 @@ export default defineComponent({
       Field.style.width = "40px";
       Field.style.height = "40px";
       // Pozadina
-      Field.style.background = "orange";
+      Field.style.background = "lightblue";
       // Fiksiramo ih
       Field.style.position = "absolute";
       // Granice da se jasnije vide
@@ -244,7 +293,7 @@ export default defineComponent({
       Field.style.borderRadius = "50%";
 
       // Brojevi polja, za debug možda posle neka upotreba
-      //Field.innerHTML = `${i}`;
+      Field.innerHTML = `${i}`;
 
       // Prvi red, svaki sledeći if predstavlja jedan red
       if (i > 0 && i < 7) {
@@ -296,60 +345,111 @@ export default defineComponent({
         Field.style.left = "280px";
       }
 
+      // Ukoliko je polje neka od startnih pozicija menjamo mu boju
       if (this.StartingPositions.includes(i)) {
-        Field.style.background = "#00000030"
+        Field.innerText = "S";
+        Field.style.background = "#00000030";
       }
+      //Field.style.display = "none";
+      FieldsCollection[i] = Field; // Kolekcija polja
+      Field.id = `field-${i}`; // ID polja
 
       // Dodajemo element
       const Main = document.getElementById("app");
       if (Main) Main.append(Field);
-
-      FieldsCollection[i] = Field; // Kolekcija polja
     }
   },
 
   methods: {
     RollDice() {
-      /* Ovu kompletnu logiku treba da prepravimo, 1 igrač 1 objekat
-      // if (this.CanThrowDiceThreeTimes[this.CurrentPlayer]) {
-      //   this.CurrentThrows++;
-      //   this.DiceNumber = Math.floor(Math.random() * 6) + 1;
+      this.DiceNumber = Math.floor(Math.random() * 6) + 1;
+      // if (this.PlayerData[this.CurrentPlayer].Pawns.every((Pawn) => Pawn.InBase == true)) {
+      //   if (this.CurrentThrows > 3) {
 
-      //   if (this.DiceNumber == 6) {
-      //     this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
       //   }
+      // } else {
 
-      //   if (this.CurrentThrows == 3) {
-
-      //     /* Ovo setati na false kada igrač ima makar 1 piuna na tabli */
-      //     this.CanThrowDiceThreeTimes[this.CurrentPlayer] = false;
-
-      //     this.CurrentPlayer++;
-      //     this.CurrentThrows = 0;
-      //   }
-      // }
-      // if (this.CurrentPlayer > 3) {
-      //   this.CurrentPlayer = 0;
       // }
     },
 
-    HandleClick(Pion: string) {
-      // if (Value < 0 || Value > FieldsCollection.length)
-      //   return alert("Neispravan broj polja." + "0-" + FieldsCollection.length);
+    HandleClick(PionID: string, Player: number) {
+      const CurrentPionEl = document.getElementById(PionID);
+      const PionObject = this.GetPionById(PionID);
+      if (!PionObject) return alert("Pion nije pronađen. ID: " + PionID);
 
-      let CurrentPion = document.getElementById(Pion);
-      console.log(CurrentPion);
-      if (!CurrentPion) return;
-      
-      
+      if (
+        PionObject.Image == "yellow" &&
+        this.CurrentPlayer != PlayerColors.Yellow
+      )
+        return alert("Nije vaš pion!");
 
+      if (PionObject.Image == "blue" && this.CurrentPlayer != PlayerColors.Blue)
+        return alert("Nije vaš pion!");
 
+      if (PionObject.Image == "red" && this.CurrentPlayer != PlayerColors.Red)
+        return alert("Nije vaš pion!");
+
+      if (
+        PionObject.Image == "green" &&
+        this.CurrentPlayer != PlayerColors.Green
+      )
+        return alert("Nije vaš pion!");
+
+      if (PionObject.InBase && this.DiceNumber != 6)
+        return alert("Pion je u bazi, treba da bacite 6!");
+
+      const StartingFieldNumber = this.StartingPositions[Player];
+      const StartingField = FieldsCollection[StartingFieldNumber];
+
+      if (!StartingField || !CurrentPionEl)
+        return alert(
+          `Error: StartingField: ${StartingField} | CurrentPion: ${CurrentPionEl}`
+        );
+
+      if (PionObject.InBase) {
+
+        // Postavljamo na startnu poziciju
+        CurrentPionEl.style.position = "absolute";
+        CurrentPionEl.style.top = StartingField.style.top;
+        CurrentPionEl.style.left = StartingField.style.left;
+        PionObject.InBase = false;
+        PionObject.Position = StartingFieldNumber;
+
+      } else {
+        // Ako piun nije u bazi, pomeramo ga na novu poziciju
+        const NextStepCount = PionObject.Position + this.DiceNumber;
+        let NextField = FieldsCollection[PionObject.Position + this.DiceNumber];
+
+        if (NextStepCount > FieldsCollection.length) {
+          NextField = FieldsCollection[NextStepCount - FieldsCollection.length];
+          PionObject.Position = NextStepCount - FieldsCollection.length;
+          CurrentPionEl.style.position = "absolute";
+          CurrentPionEl.style.top = NextField.style.top;
+          CurrentPionEl.style.left = NextField.style.left;
+          return;
+        }
+
+        PionObject.Position = NextStepCount;
+        CurrentPionEl.style.position = "absolute";
+        CurrentPionEl.style.top = NextField.style.top;
+        CurrentPionEl.style.left = NextField.style.left; // Postavljamo na novu poziciju
+      }
     },
 
-    // // proveriti type koji treba
-    // SelectFigure (Figure: any) {
+    GetPionById(PionID: string) {
+      for (let i = 0; i < this.PlayerData.length; i++) {
+        if (this.PlayerData[i].Pawns.find((Pawn) => Pawn.ID == PionID))
+          return this.PlayerData[i].Pawns.find((Pawn) => Pawn.ID == PionID);
+      }
+    },
 
-    // }
+    MovePion(PionID: string) {
+      const PionObject = this.GetPionById(PionID);
+      if (!PionObject) return alert("Pion nije pronađen. ID: " + PionID);
+
+      const CurrentPionEl = document.getElementById(PionID);
+      //const NextField = FieldsCollection[CurrentField + this.DiceNumber];
+    },
   },
 });
 </script>
@@ -364,6 +464,13 @@ export default defineComponent({
   position: absolute;
   left: 600px;
   top: 40px;
+  img {
+    width: 150px;
+    height: 150px;
+   /*
+    animation: shake 0.5s;
+    animation-iteration-count: 5; */
+  }
 }
 
 .selected {
@@ -371,18 +478,20 @@ export default defineComponent({
 }
 
 .field-background {
-  position: relative;
   width: 528px;
   height: 535px;
-  margin: 40px 26px;
+  margin: 33px 24px;
   border: 5px ridge gray;
   padding: 0px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  grid-gap: 130px;
 }
 
 .player-1-base {
-  position: absolute;
-  top: 40px;
-  left: 40px;
   width: 140px;
   height: 140px;
   background: yellow;
@@ -393,9 +502,6 @@ export default defineComponent({
 }
 
 .player-2-base {
-  position: absolute;
-  top: 40px;
-  right: 40px;
   width: 140px;
   height: 140px;
   background: blue;
@@ -406,9 +512,6 @@ export default defineComponent({
 }
 
 .player-3-base {
-  position: absolute;
-  bottom: 40px;
-  right: 40px;
   width: 140px;
   height: 140px;
   background: red;
@@ -419,9 +522,6 @@ export default defineComponent({
 }
 
 .player-4-base {
-  position: absolute;
-  bottom: 40px;
-  left: 40px;
   width: 140px;
   height: 140px;
   background: green;
@@ -436,11 +536,12 @@ export default defineComponent({
   height: 40px;
   border-radius: 50%;
   margin: 0 auto;
-  background: #FFF;
+  background: #fff;
 
   img {
     width: 40px;
     height: 40px;
+    z-index: 1;
     &:hover {
       border: 2px solid black;
       border-radius: 50%;
@@ -455,6 +556,7 @@ export default defineComponent({
   top: 0px;
   left: 0px;
 }
+
 .player1 {
   width: 40px;
   height: 40px;
@@ -462,6 +564,7 @@ export default defineComponent({
   top: 0px;
   right: 0px;
 }
+
 .player2 {
   width: 40px;
   height: 40px;
@@ -469,6 +572,7 @@ export default defineComponent({
   bottom: 0px;
   left: 0px;
 }
+
 .player3 {
   width: 40px;
   height: 40px;
@@ -476,4 +580,42 @@ export default defineComponent({
   bottom: 0px;
   right: 0px;
 }
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
 </style>
+
+
