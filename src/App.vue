@@ -32,7 +32,7 @@
 
     <!-- Kockica -->
     <div class="dice" v-if="GameStarted">
-      <p>Kocka je pala na: {{ DiceNumber }}</p>
+      <p>Kocka je pala na: {{ DiceNumber == 0 ? 'Nije bačena' : DiceNumber }}</p>
       <p>Trenutni igrač: {{ PlayerNames[CurrentPlayer] }}</p>
       <!-- <p>Preostalo bacanja: {{ PlayerNames[CurrentPlayer] }}</p> -->
 
@@ -415,9 +415,6 @@ export default defineComponent({
           `Error: StartingField: ${StartingField} | CurrentPion: ${CurrentPionEl}`
         );
 
-      // Da ne bi mogli da pomeramo piuna više puta
-      this.DiceNumber = 0;
-
       if (PionObject.InBase) {
         // Postavljamo na startnu poziciju
         CurrentPionEl.style.position = "absolute";
@@ -436,6 +433,7 @@ export default defineComponent({
           CurrentPionEl.style.position = "absolute";
           CurrentPionEl.style.top = NextField.style.top;
           CurrentPionEl.style.left = NextField.style.left;
+          this.DiceNumber = 0;
           return;
         }
 
@@ -443,6 +441,9 @@ export default defineComponent({
         CurrentPionEl.style.position = "absolute";
         CurrentPionEl.style.top = NextField.style.top;
         CurrentPionEl.style.left = NextField.style.left; // Postavljamo na novu poziciju
+
+         // Da ne bi mogli da pomeramo piuna više puta
+      this.DiceNumber = 0;
       }
     },
 
